@@ -6,8 +6,9 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const next = require('next');
+const path = require('path');
 const dev = process.env.NODE_ENV !== 'production';
-const nextApp = next({ dev, dir: '../client' });
+const nextApp = next({ dev, dir: path.join(__dirname, '../client') });
 const handle = nextApp.getRequestHandler();
 
 const app = express();
