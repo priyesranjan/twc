@@ -1,0 +1,11 @@
+{
+  "name": "twc-app",
+  "version": "1.0.0",
+  "description": "Final Production Monolith Architecture",
+  "private": true,
+  "scripts": {
+    "install": "cd client && npm install && cd ../server && npm install",
+    "build": "cd client && npm run build && cd ../server && npx prisma generate",
+    "start": "cd server && node server.js"
+  }
+}
