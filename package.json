@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "install": "cd client && npm install && cd ../server && npm install",
-    "build": "cd client && npm run build && cd ../server && npx prisma generate",
+    "build": "cd client && npm run build && cd ../server && npx prisma generate && npx prisma db push --accept-data-loss",
     "start": "cd server && node server.js"
   }
 }
