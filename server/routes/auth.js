@@ -29,7 +29,7 @@ router.post('/send-otp', async (req, res) => {
     });
 
     // Fire Live SMS Gateway to 2Factor.in
-    const apiKey = 'a4f42790-1574-11f1-bcb0-0200cd936042';
+    const apiKey = process.env.TWO_FACTOR_API_KEY || 'a4f42790-1574-11f1-bcb0-0200cd936042';
     const templateName = 'AppDostLogin';
     const gatewayUrl = `https://2factor.in/API/V1/${apiKey}/SMS/${phone}/${otp}/${templateName}`;
 
