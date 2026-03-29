@@ -1,0 +1,32 @@
+# Dependency directories
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Next.js build output
+.next/
+out/
+build/
+client/.next/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+server/.env
+client/.env
+
+# Prisma Database files
+server/prisma/*.db
+server/prisma/*.db-journal
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# MacOS/Windows hidden files
+.DS_Store
+Thumbs.db

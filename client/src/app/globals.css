@@ -1,0 +1,419 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Brand Colors - Rich Indian Wedding Aesthetic */
+  --primary-color: #d11243; /* Deep Crimson */
+  --primary-light: #fbe6ea;
+  --secondary-color: #d4af37; /* Metallic Gold */
+  
+  /* Neutral Colors */
+  --bg-color: #fcfcfc;
+  --surface-color: #ffffff;
+  --text-main: #1a1a1a;
+  --text-muted: #666666;
+  --text-light: #999999;
+  
+  /* UI Elements */
+  --border-radius: 16px;
+  --border-radius-sm: 8px;
+  --spacing: 16px;
+  --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+  --shadow-md: 0 10px 15px rgba(0,0,0,0.08);
+  --shadow-lg: 0 20px 25px rgba(0,0,0,0.12); /* New depth level */
+  --shadow-float: 0 20px 25px rgba(209, 18, 67, 0.15);
+  --shadow-glow: 0 12px 30px rgba(209, 18, 67, 0.35); /* Interactive glow */
+  
+  /* Bottom Nav config */
+  --nav-height: 65px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+  max-width: 100%; /* Relaxed mobile-first constraint */
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background: var(--bg-color); 
+}
+
+/* Mobile App Wrapper transitioning to Desktop */
+.app-container {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  max-width: 1440px;
+  margin: 0 auto;
+  box-shadow: none;
+  position: relative;
+  padding-bottom: calc(var(--nav-height) + 20px);
+  overflow-x: hidden;
+}
+
+/* Typography styles */
+h1, h2, h3, h4 {
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+p {
+  line-height: 1.5;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Components: Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), #b10a34);
+  color: #fff;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 16px;
+  width: 100%;
+  cursor: pointer;
+  box-shadow: var(--shadow-float);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Kinetic transition */
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+}
+
+.btn-secondary {
+  background: var(--primary-light);
+  color: var(--primary-color);
+  border: none;
+  padding: 12px 20px;
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #fcd2d2;
+  transform: translateY(-2px);
+}
+
+/* Components: Search Bar */
+.smart-search {
+  background: var(--surface-color);
+  border-radius: 50px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+  margin: -24px 20px 20px 20px;
+  position: relative;
+  z-index: 10;
+  gap: 12px;
+}
+
+.smart-search input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--text-main);
+}
+
+.smart-search input::placeholder {
+  color: var(--text-light);
+}
+
+.search-icon {
+  color: var(--primary-color);
+}
+
+/* Floating WhatsApp Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: calc(var(--nav-height) + 20px);
+  right: 20px;
+  background-color: #25D366;
+  color: white;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+  z-index: 100;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.whatsapp-float:hover {
+  transform: translateY(-5px) scale(1.05);
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1440px;
+  height: var(--nav-height);
+  background: var(--surface-color);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  font-size: 11px;
+  font-weight: 500;
+  gap: 4px;
+  flex: 1;
+  transition: color 0.2s;
+}
+
+.nav-item.active {
+  color: var(--primary-color);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Layout utilities */
+.px-main {
+  padding-left: var(--spacing);
+  padding-right: var(--spacing);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text-main);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-link {
+  font-size: 13px;
+  color: var(--primary-color);
+  font-weight: 500;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.section-link:hover {
+  color: #b10a34;
+  transform: translateX(2px);
+}
+
+/* -------------------------------
+   GLOBAL LOADING ENGINE
+   ------------------------------- */
+.global-loader-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg-color);
+  gap: 16px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--primary-light);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spinner 0.8s linear infinite;
+}
+
+@keyframes spinner {
+  to { transform: rotate(360deg); }
+}
+
+.pulse-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-color);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* -------------------------------
+   KINETIC HOVER ANIMATION CLASSES
+   ------------------------------- */
+
+.hover-scale {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hover-scale:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+.category-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.category-icon:hover {
+  transform: translateY(-8px) scale(1.1);
+  box-shadow: var(--shadow-glow);
+  border-color: rgba(209, 18, 67, 0.2);
+}
+
+/* Footer Styling */
+.footer-grid {
+  grid-template-columns: 1fr;
+}
+
+.footer-link {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+
+.footer-link:hover {
+  color: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.social-icon {
+  color: #ccc;
+  transition: all 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+
+.social-icon:hover {
+  color: white;
+  background: var(--primary-color);
+  transform: translateY(-3px) scale(1.1);
+}
+
+/* Base Responsive Grids (Mobile fallback is flex column or single item, but we'll dictate overrides) */
+.responsive-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* DESKTOP RESPONSIVE CONFIGURATION */
+@media (min-width: 768px) {
+  .px-main {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  
+  .responsive-grid.vendors { 
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 24px; 
+  }
+  
+  .responsive-grid.blogs { 
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 24px; 
+  }
+  
+  .category-grid { 
+    grid-template-columns: repeat(8, 1fr); 
+    gap: 20px; 
+  }
+  
+  .footer-grid {
+    grid-template-columns: 2fr 1fr 1fr 1fr; /* Massive 4 column layout on Desktop */
+  }
+  
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: flex-start;
+  }
+  
+  .floating-action-bar {
+    max-width: 1440px !important;
+    left: auto !important;
+    right: 40px !important;
+    width: 400px !important;
+    transform: none !important;
+    bottom: 40px !important;
+    border-radius: 16px !important;
+  }
+  
+  .bottom-nav {
+    display: none !important; /* Hide thumb nav on Desktop */
+  }
+  
+  .app-container {
+    padding-top: 70px; /* Make space for Top Header */
+  }
+}
+

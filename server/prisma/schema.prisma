@@ -1,0 +1,289 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  VENDOR
+  CUSTOMER
+}
+
+enum VenueType {
+  BANQUET_HALL
+  FARMHOUSE
+  HOTEL_5_STAR
+  DESTINATION
+  PARTY_HALL
+  MARRIAGE_GARDEN
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String?
+  phone        String   @unique
+  email        String?  @unique
+  password     String?
+  role         Role     @default(CUSTOMER)
+  vendors          Vendor[]
+  bookings         Booking[]
+  inquiries        Inquiry[] @relation("CustomerInquiries")
+  staffAssignments Inquiry[] @relation("StaffInquiries")
+  siteVisits   SiteVisit[] // Advanced
+  reviews      Review[]
+  wishlists    Wishlist[]
+  rentals      Rental[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model OtpVerification {
+  id        Int      @id @default(autoincrement())
+  phone     String   @unique
+  otp       String
+  expiry    DateTime
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Vendor {
+  id               Int       @id @default(autoincrement())
+        userId           Int       @unique
+  user             User      @relation(fields: [userId], references: [id])
+  businessName     String
+  vendorType       String?   // Phase 8: Mehndi Artist, Caterers, Photographer Studio, etc.
+  description      String?   @db.Text
+  address          String
+  city             String
+  verified_status  Boolean   @default(false)
+  walletBalance    Decimal   @default(0.0) @db.Decimal(10,2) // Phase 12: Pay-Per-Lead Wallet
+  unlockedLeads    Json?     // Phase 12: Array of Inquiry IDs the vendor paid for
+  services         Service[]
+  venues           Venue[]
+  inquiries        Inquiry[]
+  rentals          Rental[]
+  promotions       Promotion[] // Advanced
+  reviews          Review[]
+  bids             LeadBid[]   // Phase 3: Bidding system
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique // e.g. "Venue", "Photography", "Makeup Artist"
+  iconUrl   String?
+  services  Service[]
+}
+
+model Service {
+  id          Int       @id @default(autoincrement())
+  vendorId    Int
+  vendor      Vendor    @relation(fields: [vendorId], references: [id])
+  categoryId  Int
+  category    Category  @relation(fields: [categoryId], references: [id])
+  title       String
+  description String    @db.Text
+  price       Decimal   @db.Decimal(10,2)
+  city        String
+  images      Json?     // Array of URLs
+  rating      Decimal   @default(0.0) @db.Decimal(3,2)
+  inquiries   Inquiry[]
+  reviews     Review[]
+  wishlists   Wishlist[]
+  bookingDetails BookingDetail[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Venue {
+  id             Int       @id @default(autoincrement())
+  vendorId       Int
+  vendor         Vendor    @relation(fields: [vendorId], references: [id])
+  venueType      VenueType @default(BANQUET_HALL) // Advanced
+  pricePerPlate  Decimal   @db.Decimal(10,2)
+  capacity       Int
+  location       String
+  city           String
+  images         Json?
+  details        String    @db.Text
+  rating         Decimal   @default(0.0) @db.Decimal(3,2)
+  inquiries      Inquiry[]
+  bookingDetails BookingDetail[]
+  wishlists      Wishlist[]
+  promotions     Promotion[] // Advanced
+  siteVisits     SiteVisit[] // Advanced
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([city, pricePerPlate]) // Fast search optimization
+}
+
+model Booking {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id])
+  totalAmount   Decimal  @db.Decimal(10,2)
+  status        String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED
+  details       BookingDetail[]
+  payments      Payment[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model BookingDetail {
+  id         Int      @id @default(autoincrement())
+  bookingId  Int
+  booking    Booking  @relation(fields: [bookingId], references: [id])
+  serviceId  Int?
+  service    Service? @relation(fields: [serviceId], references: [id])
+  venueId    Int?
+  venue      Venue?   @relation(fields: [venueId], references: [id])
+  date       DateTime
+  price      Decimal  @db.Decimal(10,2)
+}
+
+model Payment {
+  id            Int      @id @default(autoincrement())
+  bookingId     Int
+  booking       Booking  @relation(fields: [bookingId], references: [id])
+  amount        Decimal  @db.Decimal(10,2)
+  status        String   @default("PENDING") // PENDING, SUCCESS, FAILED
+  transactionId String?
+  paymentMethod String?
+  createdAt     DateTime @default(now())
+}
+
+model Rental {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  vendorId   Int
+  vendor     Vendor   @relation(fields: [vendorId], references: [id])
+  itemName   String
+  startDate  DateTime
+  endDate    DateTime
+  price      Decimal  @db.Decimal(10,2)
+  status     String   @default("PENDING") // PENDING, ACTIVE, RETURNED
+  createdAt  DateTime @default(now())
+}
+
+model Inquiry {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  customer   User     @relation(fields: [customerId], references: [id], name: "CustomerInquiries")
+  vendorId   Int
+  vendor     Vendor   @relation(fields: [vendorId], references: [id])
+  serviceId  Int?
+  service    Service? @relation(fields: [serviceId], references: [id])
+  venueId    Int?
+  venue      Venue?   @relation(fields: [venueId], references: [id])
+  message          String   @db.Text
+  status           String   @default("NEW") // NEW, CONTACTED, QUOTE_SENT, CONVERTED
+  
+  // New CRM Fields
+  assignedStaffId  Int?
+  assignedStaff    User?    @relation(fields: [assignedStaffId], references: [id], name: "StaffInquiries")
+  adminNotes       String?  @db.Text
+  quotationSent    Boolean  @default(false)
+  quotationLog     Json?    
+  eventDetails     Json?    // Added for Advanced Lead Capture Wizard
+  followUpDate     DateTime? // Phase 2: CRM Smart Follow-up Date
+  
+  bids             LeadBid[] // Phase 3: Vendor Bids
+  invoice          Invoice?  // Phase 6: Auto-Billing Engine
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model LeadBid {
+  id         Int      @id @default(autoincrement())
+  inquiryId  Int
+  inquiry    Inquiry  @relation(fields: [inquiryId], references: [id])
+  vendorId   Int
+  vendor     Vendor   @relation(fields: [vendorId], references: [id])
+  bidAmount  Decimal  @db.Decimal(10,2)
+  vendorNotes String?  @db.Text
+  status     String   @default("PENDING") // PENDING, ACCEPTED, DECLINED
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Invoice {
+  id         Int      @id @default(autoincrement())
+  inquiryId  Int      @unique
+  inquiry    Inquiry  @relation(fields: [inquiryId], references: [id])
+  amount     Decimal  @db.Decimal(10,2)
+  status     String   @default("UNPAID") // UNPAID, PAID, CANCELLED
+  dueDate    DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  vendorId   Int
+  vendor     Vendor   @relation(fields: [vendorId], references: [id])
+  serviceId  Int?
+  service    Service? @relation(fields: [serviceId], references: [id])
+  rating     Int      @default(5)
+  comment    String?  @db.Text
+  createdAt  DateTime @default(now())
+}
+
+model Wishlist {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  serviceId  Int?
+  service    Service? @relation(fields: [serviceId], references: [id])
+  venueId    Int?
+  venue      Venue?   @relation(fields: [venueId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+// ==========================================
+// ADVANCED FEATURES: SEO & CONVERSIONS
+// ==========================================
+
+model SiteVisit {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  customer   User     @relation(fields: [customerId], references: [id])
+  venueId    Int
+  venue      Venue    @relation(fields: [venueId], references: [id])
+  visitDate  DateTime
+  status     String   @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
+  createdAt  DateTime @default(now())
+}
+
+model Promotion {
+  id               Int      @id @default(autoincrement())
+  vendorId         Int
+  vendor           Vendor   @relation(fields: [vendorId], references: [id])
+  venueId          Int?
+  venue            Venue?   @relation(fields: [venueId], references: [id])
+  discountPercent  Int      @default(0) // e.g., 40 for 40% OFF
+  validUntil       DateTime
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+}
+
+model BlogPost {
+  id        Int      @id @default(autoincrement())
+  title     String
+  slug      String   @unique
+  excerpt   String?  @db.Text
+  content   String   @db.Text
+  imageUrl  String?
+  authorId  Int?
+  createdAt DateTime @default(now())
+}
